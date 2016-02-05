@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+gmx pdb2gmx -f $DIR/1aki.pdb -o 1aki_processed.gro -water spc -ff oplsaa
