@@ -3,6 +3,7 @@
 //#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 PyDoc_STRVAR(popdrop__doc__, "popdrop(n_particles, box_edge_length, particle_radius, droplet_radius)\n\nDrOP algorithm\n\nPopulate box with particles at non-overlapping locations and cut out spherical droplet.");
 static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
@@ -37,7 +38,7 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
     PyErr_SetString(PyExc_ValueError, "Particle radius must be smaller than droplet radius.");
   }
 
-  //printf("n_particles = %d; box_edge_length = %f; particle_radius = %f\n", n_particles, box_edge_length, particle_radius);
+  //printf("n_particles = %d; box_edge_length = %f nm; particle_radius = %f nm\n", n_particles, box_edge_length/1.E-9, particle_radius/1.E-9);
 
   double * pos = (double *) malloc(sizeof(double) * n_particles * 3);
   double * temp = (double *) malloc(sizeof(double) * n_particles * 3);
@@ -46,14 +47,16 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
   int n_box;
   int n_droplet;
   int overlap;
-  double x,y,z,dx,dy,dz;
-  double d_sq;
-  double d_min_sq;
+  int try = 0;
+  int max_try = INT_MAX;
+  double x,y,z,dx,dy,dz,d_sq;
+  double particle_radius_sq;
+  double eff_droplet_radius_sq;
 
   n_box = 0;
-  d_min_sq = (particle_radius / box_edge_length)*(particle_radius / box_edge_length);
+  particle_radius_sq = (particle_radius / box_edge_length)*(particle_radius / box_edge_length);
   
-  while (n_box < n_particles) {
+  while ((n_box < n_particles) && (try < max_try)) {
     x = rand() / (double) RAND_MAX;
     y = rand() / (double) RAND_MAX;
     z = rand() / (double) RAND_MAX;
@@ -64,32 +67,40 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
       dy = y-pos[i*3+1];
       dz = z-pos[i*3+2];
       d_sq = dx*dx + dy*dy + dz*dz;
-      if (d_sq < d_min_sq) {
+      if (d_sq < particle_radius_sq) {
 	overlap = 1;
       }
     }
     // Place particle if no overlap found
     if (overlap == 0) {
+      try = 0;
       pos[n_box*3+0] = x;
       pos[n_box*3+1] = y;
       pos[n_box*3+2] = z;
       n_box++;
+    } else {
+      try++;
     }
   }
+  if (try == max_try) {
+    PyErr_SetString(PyExc_ValueError, "Reached limit of tries for placing particles into the box. Too high particle density?");
+    return NULL;
+  }
+  
 
   n_droplet = 0;
-  d_min_sq = (droplet_radius / box_edge_length)*(droplet_radius / box_edge_length);
+  eff_droplet_radius_sq = ((droplet_radius-particle_radius) / box_edge_length)*((droplet_radius-particle_radius) / box_edge_length);
   
   for (i=0; i<n_particles; i++) {
     x = pos[i*3+0];
     y = pos[i*3+1];
     z = pos[i*3+2];
-    // Check if particle in droplet
+    // Check if particle entirely in droplet
     dx = 0.5-x;
     dy = 0.5-y;
     dz = 0.5-z;
     d_sq = dx*dx + dy*dy + dz*dz;
-    if (d_sq < d_min_sq) {
+    if (d_sq < eff_droplet_radius_sq) {
       temp[n_droplet*3+0] = x;
       temp[n_droplet*3+1] = y;
       temp[n_droplet*3+2] = z;
