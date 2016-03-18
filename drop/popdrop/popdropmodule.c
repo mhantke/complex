@@ -1,6 +1,5 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
-//#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -11,7 +10,7 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
 
   int n_particles;
   double box_edge_length, particle_radius, droplet_radius;
-
+  
   static char *kwlist[] = {"n_particles", "box_edge_length", "particle_radius", "droplet_radius", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "iddd", kwlist, &n_particles, &box_edge_length, &particle_radius, &droplet_radius)) {
     return NULL;
@@ -24,21 +23,23 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (particle_radius <= 0.) {
     PyErr_SetString(PyExc_ValueError, "Particle radius must be > 0.");
+    return NULL;
   }
 
   if (droplet_radius <= 0.) {
     PyErr_SetString(PyExc_ValueError, "Droplet radius must be > 0.");
+    return NULL;
   }
 
   if (droplet_radius >= (box_edge_length/2.)) {
     PyErr_SetString(PyExc_ValueError, "Droplet radius must be smaller than half the box edge length.");
+    return NULL;
   }
 
   if (droplet_radius <= particle_radius) {
     PyErr_SetString(PyExc_ValueError, "Particle radius must be smaller than droplet radius.");
+    return NULL;
   }
-
-  //printf("n_particles = %d; box_edge_length = %f nm; particle_radius = %f nm\n", n_particles, box_edge_length/1.E-9, particle_radius/1.E-9);
 
   double * pos = (double *) malloc(sizeof(double) * n_particles * 3);
   double * temp = (double *) malloc(sizeof(double) * n_particles * 3);
@@ -51,8 +52,12 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
   int max_try = INT_MAX;
   double x,y,z,dx,dy,dz,d_sq;
   double particle_radius_sq;
-  double eff_droplet_radius_sq;
+  double droplet_radius_sq;
 
+  printf("n_particles = %i; box_edge_length = %e; particle_radius = %e; droplet_radius = %e\n", n_particles, box_edge_length, particle_radius, droplet_radius);
+
+  // 1) Place spherical particles at random positions in box. Do not allow overlap
+  //    (Allow spheres to be partially outside of the box!)
   n_box = 0;
   particle_radius_sq = (particle_radius / box_edge_length)*(particle_radius / box_edge_length);
   
@@ -71,7 +76,7 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
 	overlap = 1;
       }
     }
-    // Place particle if no overlap found
+    // Assign particle position if no overlap found
     if (overlap == 0) {
       try = 0;
       pos[n_box*3+0] = x;
@@ -86,11 +91,12 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
     PyErr_SetString(PyExc_ValueError, "Reached limit of tries for placing particles into the box. Too high particle density?");
     return NULL;
   }
-  
 
+  // 2) Select spherical volume (droplet) from the box and count the particles that live in it
+  //    (Allow particles to be partially outside of the droplet!)
   n_droplet = 0;
-  eff_droplet_radius_sq = ((droplet_radius-particle_radius) / box_edge_length)*((droplet_radius-particle_radius) / box_edge_length);
-  
+  droplet_radius_sq = (droplet_radius / box_edge_length)*(droplet_radius / box_edge_length);
+    
   for (i=0; i<n_particles; i++) {
     x = pos[i*3+0];
     y = pos[i*3+1];
@@ -100,7 +106,7 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
     dy = 0.5-y;
     dz = 0.5-z;
     d_sq = dx*dx + dy*dy + dz*dz;
-    if (d_sq < eff_droplet_radius_sq) {
+    if (d_sq < droplet_radius_sq) {
       temp[n_droplet*3+0] = x;
       temp[n_droplet*3+1] = y;
       temp[n_droplet*3+2] = z;
@@ -132,7 +138,7 @@ static PyMethodDef PopdropMethods[] = {
 PyMODINIT_FUNC initpopdrop(void)
 {
   import_array();
-  PyObject *m = Py_InitModule3("popdrop", PopdropMethods, "Create popdrop density map");
+  PyObject *m = Py_InitModule3("popdrop", PopdropMethods, "Random placement of particles into spherical volume");
   if (m == NULL)
     return;
 }
