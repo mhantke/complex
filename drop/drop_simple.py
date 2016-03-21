@@ -70,6 +70,8 @@ for c_molar in cs_molar:
             f["/n_particles"] = numpy.zeros(shape=(Njobs))
             f["/pos"] = numpy.zeros(shape=(Njobs,N_max,3))
             f["/i"] = [0]
+            f["/p"] = p_D_xi
+            f["/c_molar"] = [c_molar]
     def getres_i(i):
         with h5py.File("drops_%i.h5" % i, "r") as f:
             pos = numpy.array(f["/pos"])
