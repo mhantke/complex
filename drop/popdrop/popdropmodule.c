@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-PyDoc_STRVAR(popdrop__doc__, "popdrop(n_particles, box_edge_length, particle_radius, droplet_radius)\n\nDrOP algorithm\n\nPopulate box with particles at non-overlapping locations and cut out spherical droplet.");
+PyDoc_STRVAR(popdrop__doc__, "popdrop(n_particles, box_edge_length, particle_radius, droplet_radius, random_seed=None)\n\nDrOP algorithm\n\nPopulate box with particles at non-overlapping locations and cut out spherical droplet.");
 static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
 {
 
@@ -54,6 +54,22 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
   double particle_radius_sq;
   double droplet_radius_sq;
 
+  // setup unbuffered urandom
+  FILE * urandom = fopen ("/dev/urandom", "r");
+  setvbuf (urandom, NULL, _IONBF, 0);  // turn off buffering
+  
+  // setup state buffer
+  unsigned short randstate[3];
+  // fgetc() returns a `char`, we need to fill a `short`
+  randstate[0] = (fgetc (urandom) << 8) | fgetc (urandom);
+  randstate[1] = (fgetc (urandom) << 8) | fgetc (urandom);
+  randstate[2] = (fgetc (urandom) << 8) | fgetc (urandom);
+  
+  // cleanup urandom
+  fclose (urandom);
+
+
+  
   printf("n_particles = %i; box_edge_length = %e; particle_radius = %e; droplet_radius = %e\n", n_particles, box_edge_length, particle_radius, droplet_radius);
 
   // 1) Place spherical particles at random positions in box. Do not allow overlap
@@ -62,9 +78,12 @@ static PyObject *popdrop(PyObject *self, PyObject *args, PyObject *kwargs)
   particle_radius_sq = (particle_radius / box_edge_length)*(particle_radius / box_edge_length);
   
   while ((n_box < n_particles) && (try < max_try)) {
-    x = rand() / (double) RAND_MAX;
-    y = rand() / (double) RAND_MAX;
-    z = rand() / (double) RAND_MAX;
+    //x = (double) rand() / (RAND_MAX+1.);
+    //y = (double) rand() / (RAND_MAX+1.);
+    //z = (double) rand() / (RAND_MAX+1.);
+    x = erand48(randstate);
+    y = erand48(randstate);
+    z = erand48(randstate);
     overlap = 0;
     // Check if position overlaps with any particle in box
     for (i=0; i<n_box; i++) {
