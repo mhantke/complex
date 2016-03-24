@@ -1,0 +1,6 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+echo "Choose: 15 0"
+gmx energy -f nvt.edr -o temperature.xvg

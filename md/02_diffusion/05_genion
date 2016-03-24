@@ -1,0 +1,7 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+echo "Choose: SOL (13?)"
+# Physiological NaCl concentration: 0.154 M ("-conc 0.154"), "-neutral" makes sure that protein charge is neutralised
+gmx genion -s ions.tpr -o 1ubq_solv_ions.gro -p topol.top -neutral -conc 0.154

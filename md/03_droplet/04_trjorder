@@ -1,0 +1,6 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# Order atoms by distance from center of mass of protein
+gmx trjorder -f 03_box_sol.gro -s 03_box_sol.gro -o 04_drop.gro -com -da 0 -nshell -r 9

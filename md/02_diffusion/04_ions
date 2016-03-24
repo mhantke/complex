@@ -1,0 +1,7 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# preprocessor grompp
+# ions.tpr: binary format for genion
+gmx grompp -f $DIR/mdp/ions.mdp -c 1ubq_solv.gro -p topol.top -o ions.tpr

@@ -1,0 +1,7 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# npt.cpt allows to continue simulation from exactly the same point
+# npt.gro = only positions and velocities
+gmx grompp -f $DIR/mdp/md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_1.tpr

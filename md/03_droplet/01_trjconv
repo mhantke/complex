@@ -1,0 +1,8 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# Remove water from gro file (we could also do this in editor)
+echo "!!! Choose Protein group"
+gmx trjconv -f 00_init.gro -s 00_init.tpr -o 01_no_sol.gro -center -pbc whole
+#gmx trjconv -s out/no_sol.tpr -f out/no_sol.gro -o temp.pdb

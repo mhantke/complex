@@ -1,3 +1,7 @@
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as pypl
+
 import numpy
 import h5py
 import scipy.constants
@@ -5,7 +9,6 @@ import popdrop
 
 from python_tools import multiprocesstools as mpt
 
-from matplotlib import pyplot as pypl
 from scipy.misc import factorial
 
 # Molar protein concentration
@@ -49,8 +52,9 @@ for c_molar in cs_molar:
     # Assign positions
     # ================
 
-    Nprocesses = 16
-    Njobs = 1600
+    Nprocesses = 64
+    #Njobs = 102400
+    Njobs = Nprocesses * 1000
 
     def worker_i(D, i):
         return {"pos" : popdrop.popdrop(N, L, R_S, R_D_xi[i])}
@@ -80,7 +84,7 @@ for c_molar in cs_molar:
 
     for i in range(len(R_D_xi)):
         print i, R_D_xi[i]
-        loginit_i(i, N_max=40)
+        loginit_i(i, N_max=100)
         print "initialised"
         mpt.multiprocess(Nprocesses,
                          Njobs, 

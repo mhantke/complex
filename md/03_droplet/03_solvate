@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+gmx solvate -cp 02_box.gro -cs spc216.gro -p 00_init_no_sol.top -o 03_box_sol.gro

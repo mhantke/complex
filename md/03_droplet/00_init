@@ -1,0 +1,6 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+mkdir $DIR/out
+ln -s ../input/00_init.gro $DIR/out/00_init.gro
+ln -s ../input/00_init.tpr $DIR/out/00_init.tpr
+ln -s ../input/00_init_no_sol.top $DIR/out/00_init_no_sol.top

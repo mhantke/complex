@@ -1,0 +1,6 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# d at least 1.6, we make it a bit larger
+gmx editconf -f 1ubq_processed.gro -o 1ubq_newbox.gro -c -d 3.0 -bt dodecahedron

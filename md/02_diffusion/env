@@ -1,0 +1,12 @@
+# CUDA 7.5
+export LD_LIBRARY_PATH=/usr/local/cuda-7.5/lib64/:/usr/local/cuda-7.5/lib/:$LD_LIBRARY_PATH
+export PATH=/usr/local/cuda-7.5/bin/:${PATH}
+# DAVINCI ENV
+export LIBRARY_PATH=/davinci/lib
+export PATH=/davinci/bin:${PATH}
+export C_INCLUDE_PATH=/davinci/include 
+export CPLUS_INCLUDE_PATH=/davinci/include 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/davinci/lib:/davinci/lib64
+# GROMACS ENV
+export PATH=/home/hantke/local_gromacs/bin:$PATH
+export LD_LIBRARY_PATH=/home/hantke/local_gromacs/lib:$LD_LIBRARY_PATH

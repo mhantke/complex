@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+gmx pdb2gmx -f $DIR/1ubq.pdb -o 1ubq_processed.gro -water tip3p -ff oplsaa -vsite hydrogens

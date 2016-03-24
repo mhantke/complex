@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+gmx grompp -f $DIR/mdp/npt.mdp -c nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
