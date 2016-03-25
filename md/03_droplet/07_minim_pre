@@ -1,0 +1,6 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# Creates binary for minimising
+gmx grompp -f $DIR/mdp/minim.mdp -c 06_drop_ions.gro -p topol.top -o em.tpr

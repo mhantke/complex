@@ -1,0 +1,11 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# Physiological NaCl concentration: 0.154 M
+N_NACL="$(../scripts/calculate_nr_ions.py -s 04_drop.gro -c 0.154)"
+echo "We have to add $N_NACL NaCl"
+# Run genion and replace waters by Na+ and Cl-
+gmx genion -s 05_ions.tpr -o 06_drop_ions.gro -p topol.top -np $N_NACL -nn $N_NACL<<EOF
+13
+EOF

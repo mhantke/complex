@@ -1,0 +1,19 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+cd $DIR/out/
+# Order atoms by distance from center of mass of protein
+gmx trjorder -f 03_box_sol.gro -s 03_box_sol.gro -o 04_box_sol_order.gro -com -da 0 -nshell nshell.xvg -r 9 <<EOF
+1
+13
+EOF
+# Read number of included molecules in drop
+N_DROP="$(../scripts/last_value_xvg.py nshell.xvg)"
+# Count total number of water molecules in box
+N_TOT="$(../scripts/count_molecules.py -s 04_box_sol_order.gro -n SOL)"
+N_REMOVE=$(( $N_TOT - $N_DROP ))
+# Remove waters
+../scripts/remove_ordered_waters.py -s 04_box_sol_order.gro -o 04_drop.gro -p topol.top -n $N_REMOVE
+echo "Total number of water molecules in box: $N_TOT"
+echo "Water molecules in the drop: $N_DROP"
+echo "Water molecules that were removed: $N_REMOVE"
