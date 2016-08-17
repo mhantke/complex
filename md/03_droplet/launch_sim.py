@@ -54,7 +54,7 @@ if __name__ == "__main__":
  
 
    for link in links:
-      lines += ["ln -s ../%s\n" % link]
+      lines += ["ln -s -f ../%s\n" % link]
 
    if args.start_at is not None:
       exs = [ex for ex in exs if int(ex[:2])>=args.start_at]

@@ -1,3 +1,4 @@
 #!/bin/bash
+source ./env
 cd out/
 #gmx energy -f em.edr -o potential.xvg 

@@ -1,9 +1,9 @@
 #!/bin/bash
-source env
+source ./env
 cd out/
 cp 10_topol.top 12_topol.top
 cp 10_restraint_coords.top 12_restraint_coords.top
 # MAX COMMENT:
 # I believe all information about positions and velovities should be already in the nvt.gro but we anyhow pass nvt.cpt in addition...?
 # I think we are passing nvt.cpt because of precision, better ask Erik about this again...
-gmx grompp -f ../mdp/nvt.mdp -r 10_restraint_coords.gro -c nvt.gro -t nvt.cpt -p 12_topol.top -o 12_npt.tpr
+gmx grompp -f ../mdp/nvt.mdp -r 10_restraint_coords.gro -c nvt.gro -t nvt.cpt -p 12_topol.top -o npt.tpr

@@ -1,6 +1,6 @@
 #!/bin/bash
 # source environment
-source /home/hantke/local_gromacs/bin/GMXRC
+source ./env
 # go to output directory
 cd out/
 # Reposition waters to center of the box
