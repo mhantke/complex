@@ -1,0 +1,244 @@
+[2016/08/15]
+
+Problem:
+--------
+
+"
+Fatal error:
+cudaMallocHost of size 1024128 bytes failed: all CUDA-capable devices are busy or unavailable
+"
+
+Identifying faulty C-nodes:
+---------------------------
+
+- ran "./cluster_fork.py -c -L -s nvidia-smi" => found out that c012 has only 3 GPUs that work 
+- testing running job with only one node and sbatch argument --nodelist on each node separately and check whether it fails or not. Failing nodes:
+  c003 OK
+  c004 OK
+  c005 OK
+  c006 failed
+  c007 OK
+  c008 OK
+  c009 OK
+  c010 OK
+  c011 OK
+  c012 only 3 GPUs, see above 
+  c013 OK 
+  c014 OK
+  c015 OK
+
+Minimization:
+-------------
+
+- job running on 10 well-behaving nodes succeeds:
+"
+#!/bin/bash
+#SBATCH --nodes=10
+#SBATCH --nodelist=c003,c004,c005,c007,c008,c009,c010,c011,c013,c014
+#SBATCH --ntasks-per-node=12
+#SBATCH --gres=gpu:4
+#SBATCH --exclusive
+#SBATCH --partition=c
+#SBATCH --exclude=c002,c012
+#SBATCH --job-name=gmx_min
+#SBATCH --output=out/gmx_min.out
+cd out
+mpirun gmx_mpi mdrun -v -deffnm em
+"
+
+output:
+"
+Step= 5325, Dmax= 3.4e-03 nm, Epot= -4.97928e+06 Fmax= 9.24112e+02, atom= 111
+
+writing lowest energy coordinates.
+
+Steepest Descents converged to Fmax < 1000 in 5326 steps
+Potential Energy  = -4.9792795e+06
+Maximum force     =  9.2411206e+02 on atom 111
+Norm of force     =  1.0198773e+01
+
+NOTE: 13 % of the run time was spent in domain decomposition,
+      4 % of the run time was spent in pair search,
+      you might want to increase nstlist (this has no effect on accuracy)
+"
+
+Equilibration:
+--------------
+
+"
+#!/bin/bash
+#SBATCH --nodes=10
+#SBATCH --nodelist=c003,c004,c005,c007,c008,c009,c010,c013,c014,c015
+#SBATCH --ntasks-per-node=6
+#SBATCH --cpus-per-task=4
+#SBATCH --gres=gpu:3
+#SBATCH --partition=c
+#SBATCH --exclude=c002,c012
+#SBATCH --job-name=gmx_eq1
+#SBATCH --output=out/gmx_eq1.out
+export OMP_NUM_THREADS=4
+cd out/
+mpirun gmx_mpi mdrun -deffnm nvt -pin on -ntomp 4 -gpu_id 001122
+"
+
+Segfault:
+"
+mpirun noticed that process rank 47 with PID 29167 on node c011 exited on signal 11 (Segmentation fault).
+"
+
+- Same result when not running with c011 and c015 instead
+- Same result with configuration used for minimization
+- New result with following configuration:
+
+"
+#!/bin/bash
+#SBATCH --nodes=10
+#SBATCH --nodelist=c003,c004,c005,c007,c008,c009,c010,c013,c014,c015
+#SBATCH --ntasks-per-node=12
+#SBATCH --gres=gpu:4
+#SBATCH --partition=c
+#SBATCH --exclusive
+#SBATCH --exclude=c002,c012
+#SBATCH --job-name=gmx_eq1
+#SBATCH --output=out/gmx_eq1.out
+cd out/
+mpirun gmx_mpi mdrun -deffnm nvt
+"
+
+Segfault with verbos error message:
+"
+--------------------------------------------------------------------------
+The InfiniBand retry count between two MPI processes has been
+exceeded.  "Retry count" is defined in the InfiniBand spec 1.2
+(section 12.7.38):
+
+    The total number of times that the sender wishes the receiver to
+    retry timeout, packet sequence, etc. errors before posting a
+    completion error.
+
+This error typically means that there is something awry within the
+InfiniBand fabric itself.  You should note the hosts on which this
+error has occurred; it has been observed that rebooting or removing a
+particular host from the job can sometimes resolve this issue.
+
+Two MCA parameters can be used to control Open MPI's behavior with
+respect to the retry count:
+
+* btl_openib_ib_retry_count - The number of times the sender will
+  attempt to retry (defaulted to 7, the maximum value).
+* btl_openib_ib_timeout - The local ACK timeout parameter (defaulted
+  to 20).  The actual timeout value used is calculated as:
+
+     4.096 microseconds * (2^btl_openib_ib_timeout)
+
+  See the InfiniBand spec 1.2 (section 12.7.34) for more details.
+
+Below is some information about the host that raised the error and the
+peer to which it was connected:
+
+  Local host:   c007
+  Local device: mlx4_0
+  Peer host:    c010
+
+You may need to consult with your system administrator to get this
+problem fixed.
+--------------------------------------------------------------------------
+[[3549,1],47][btl_openib_component.c:3369:handle_wc] from c007 to: c010 error polling LP CQ with status RETRY EXCEEDED ERROR status number 12 for wr_id 137b880 opcode 1  vendor error 129 qp_idx 1
+--------------------------------------------------------------------------
+mpirun noticed that process rank 83 with PID 16698 on node c010 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
+"
+
+- try without ib:
+"
+#!/bin/bash
+#SBATCH --nodes=10
+#SBATCH --nodelist=c003,c004,c005,c007,c008,c009,c010,c013,c014,c015
+#SBATCH --ntasks-per-node=12
+#SBATCH --gres=gpu:4
+#SBATCH --partition=c
+#SBATCH --exclusive
+#SBATCH --exclude=c002,c012
+#SBATCH --job-name=gmx_eq1
+#SBATCH --output=out/gmx_eq1.out
+cd out/
+mpirun --mca btl ^openib gmx_mpi mdrun -deffnm nvt
+"
+
+Fails with:
+"
+[c013][[3839,1],91][btl_tcp_frag.c:215:mca_btl_tcp_frag_recv] mca_btl_tcp_frag_recv: readv failed: Connection reset by peer (104)
+--------------------------------------------------------------------------
+mpirun noticed that process rank 103 with PID 26785 on node c014 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
+"
+
+- try without GPUs:
+"
+##SBATCH --gres=gpu:4
+"
+
+Also segfaults:
+"
+--------------------------------------------------------------------------
+mpirun noticed that process rank 90 with PID 31724 on node c013 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
+"
+
+- try with longer MPI timeout and without GPUs:
+"
+mpirun --mca btl_openib_ib_timeout 24 gmx_mpi mdrun -deffnm nvt
+"
+
+Also segfaults:
+"
+--------------------------------------------------------------------------
+mpirun noticed that process rank 112 with PID 30184 on node c015 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
+"
+
+Try with less processes same nodes:
+"
+#!/bin/bash
+#SBATCH --nodes=7
+#SBATCH --nodelist=c003,c004,c005,c007,c008,c009,c010,c013,c014,c015
+#SBATCH --ntasks-per-node=4
+#SBATCH --partition=c
+#SBATCH --exclusive
+#SBATCH --exclude=c002,c012
+#SBATCH --job-name=gmx_eq1
+#SBATCH --output=out/gmx_eq1.out
+export OMP_NUM_THREADS=6
+cd out/
+mpirun gmx_mpi mdrun -deffnm nvt
+"
+
+Segfault:
+"
+--------------------------------------------------------------------------
+mpirun noticed that process rank 38 with PID 30462 on node c015 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
+"
+
+Try without nodes that showed up with segfault:
+"
+#!/bin/bash
+#SBATCH --nodes=7
+#SBATCH --nodelist=c003,c004,c005,c008,c009,c013,c014
+#SBATCH --ntasks-per-node=4
+#SBATCH --partition=c
+#SBATCH --exclusive
+#SBATCH --exclude=c002,c012
+#SBATCH --job-name=gmx_eq1
+#SBATCH --output=out/gmx_eq1.out
+export OMP_NUM_THREADS=6
+cd out/
+mpirun gmx_mpi mdrun -deffnm nvt
+"
+
+Segfaults:
+"
+mpirun noticed that process rank 2 with PID 23574 on node c003 exited on signal 11 (Segmentation fault).
+"
+
+Try without c003:

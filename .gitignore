@@ -1,0 +1,6 @@
+*.py[cod]
+*.out
+\#*
+.\#*
+*DS_Store
+.fuse_hidden*
