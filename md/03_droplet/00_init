@@ -1,6 +1,7 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-mkdir $DIR/out
-ln -s ../input/00_init.gro $DIR/out/00_init.gro
-ln -s ../input/00_init.tpr $DIR/out/00_init.tpr
-cp $DIR/input/00_init_no_sol.top $DIR/out/topol.top
+rm -r out
+mkdir out
+cp input/00_init.gro out/00_init.gro
+cp input/00_init.tpr out/00_init.tpr
+cp input/00_init_no_sol.top out/00_topol.top
+cp itp/*.itp out
