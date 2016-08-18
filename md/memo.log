@@ -241,4 +241,78 @@ Segfaults:
 mpirun noticed that process rank 2 with PID 23574 on node c003 exited on signal 11 (Segmentation fault).
 "
 
-Try without c003:
+2016/08/18
+
+Using newly compiled GROMACS 2016 (on node c022)
+
+Only using one GPU for equilibration nvt works.
+
+Input:
+"
+#!/bin/bash
+#SBATCH --exclude=c002,c012
+#SBATCH --nodelist=c022
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --partition=c
+#SBATCH --exclusive
+#SBATCH --job-name=gmx
+#SBATCH --output=/home/hantke/complex/md/03_droplet/test2016/run.log
+#SBATCH --workdir=/home/hantke/complex/md/03_droplet/test2016
+source ./env
+cd out/
+gmx mdrun -deffnm nvt -v 
+"
+
+Output:
+"
+Using 1 MPI thread
+Using 24 OpenMP threads 
+
+1 compatible GPU is present, with ID 0
+1 GPU auto-selected for this run.
+Mapping of GPU ID to the 1 PP rank in this node: 0
+
+
+Back Off! I just backed up nvt.trr to ./#nvt.trr.21#
+
+Back Off! I just backed up nvt.edr to ./#nvt.edr.22#
+
+WARNING: This run will generate roughly 6895 Mb of data
+
+starting mdrun 'UBIQUITIN in water'
+50000 steps,    200.0 ps.
+step   80: timed with pme grid 160 160 160, coulomb cutoff 1.000: 6221.1 M-cycles
+step  160: timed with pme grid 128 128 128, coulomb cutoff 1.221: 4533.9 M-cycles
+step  240: timed with pme grid 112 112 112, coulomb cutoff 1.395: 3998.3 M-cycles
+step  320: timed with pme grid 100 100 100, coulomb cutoff 1.562: 3743.8 M-cycles
+step  400: timed with pme grid 84 84 84, coulomb cutoff 1.860: 3430.0 M-cycles
+step  480: timed with pme grid 72 72 72, coulomb cutoff 2.170: 4214.7 M-cycles
+step  560: timed with pme grid 80 80 80, coulomb cutoff 1.953: 3512.9 M-cycles
+step  640: timed with pme grid 84 84 84, coulomb cutoff 1.860: 3613.2 M-cycles
+step  720: timed with pme grid 96 96 96, coulomb cutoff 1.628: 3708.7 M-cycles
+step  800: timed with pme grid 100 100 100, coulomb cutoff 1.562: 3613.8 M-cycles
+step  880: timed with pme grid 104 104 104, coulomb cutoff 1.502: 3905.3 M-cycles
+step  960: timed with pme grid 108 108 108, coulomb cutoff 1.447: 4056.7 M-cycles
+step 1040: timed with pme grid 80 80 80, coulomb cutoff 1.953: 3597.3 M-cycles
+step 1120: timed with pme grid 84 84 84, coulomb cutoff 1.860: 3626.3 M-cycles
+step 1200: timed with pme grid 96 96 96, coulomb cutoff 1.628: 3565.4 M-cycles
+step 1280: timed with pme grid 100 100 100, coulomb cutoff 1.562: 3821.3 M-cycles
+step 1360: timed with pme grid 104 104 104, coulomb cutoff 1.502: 3931.0 M-cycles
+step 1440: timed with pme grid 108 108 108, coulomb cutoff 1.447: 4019.7 M-cycles
+step 1520: timed with pme grid 80 80 80, coulomb cutoff 1.953: 3948.7 M-cycles
+step 1600: timed with pme grid 84 84 84, coulomb cutoff 1.860: 3475.5 M-cycles
+step 1680: timed with pme grid 96 96 96, coulomb cutoff 1.628: 3732.3 M-cycles
+step 1760: timed with pme grid 100 100 100, coulomb cutoff 1.562: 3823.3 M-cycles
+              optimal pme grid 84 84 84, coulomb cutoff 1.860
+step 49900, remaining wall clock time:     4 s          
+Writing final coordinates.
+step 50000, remaining wall clock time:     0 s          
+               Core t (s)   Wall t (s)        (%)
+       Time:    52775.503     2198.979     2400.0
+                         36:38
+                 (ns/day)    (hour/ns)
+Performance:        7.858        3.054
+"
+

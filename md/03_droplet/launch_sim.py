@@ -10,6 +10,7 @@ if __name__ == "__main__":
    parser = argparse.ArgumentParser(description='Remove water molecules at the end of .gro file')
    parser.add_argument('-o', '--output-folder', type=str, help="output folder", nargs='?', required=True)
    parser.add_argument('-s', '--start-at', type=int, help="start at given processing step")
+   parser.add_argument('-i', '--single-step', type=int, help="run only single step")
    if(len(sys.argv) == 1):
       parser.print_help()
       sys.exit(0)
@@ -17,17 +18,20 @@ if __name__ == "__main__":
 
    output_folder = os.path.abspath(args.output_folder)
 
-   if args.start_at is None:
+   if args.start_at is None and args.single_step is None:
       do("rm -r %s" % output_folder)
       do("mkdir %s" % output_folder)
 
    lines = []
    lines += ["#!/bin/bash\n",
              "#SBATCH --exclude=c002,c012\n",
+             "#SBATCH --nodelist=c022\n",
              "#SBATCH --nodes=1\n",
-             "#SBATCH --ntasks-per-node=6\n",
-             "#SBATCH --cpus-per-task=4\n",
-             "#SBATCH --gres=gpu:3\n",
+             #"#SBATCH --ntasks-per-node=6\n",
+             "#SBATCH --ntasks-per-node=1\n",
+             #"#SBATCH --cpus-per-task=4\n",
+             #"#SBATCH --gres=gpu:2\n",
+             "#SBATCH --gres=gpu:1\n",
              "#SBATCH --partition=c\n",
              "#SBATCH --exclusive\n",
              "#SBATCH --job-name=gmx\n",
@@ -50,7 +54,7 @@ if __name__ == "__main__":
           "13_npt_pre",
           "14_npt.sh",
    ]
-   links = exs + ["input", "itp", "mdp", "env", "scripts"]
+   links = exs + ["env", "input", "itp", "mdp", "env", "scripts"]
  
 
    for link in links:
@@ -59,8 +63,12 @@ if __name__ == "__main__":
    if args.start_at is not None:
       exs = [ex for ex in exs if int(ex[:2])>=args.start_at]
 
+   if args.single_step is not None:
+      exs = [ex for ex in exs if int(ex[:2])==args.single_step]
+
    for ex in exs:
-      lines += ["./%s\n" % ex]
+      cmd = "./%s" % ex
+      lines += ["echo \"%s\"\n" % cmd, "%s\n" % cmd]
 
    slurm_file = "%s/run.sh" % output_folder
    with open(slurm_file, "w") as f:

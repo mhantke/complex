@@ -4,13 +4,13 @@ source ./env
 # go to output directory
 cd out/
 # Reposition waters to center of the box
-../scripts/waters_to_origin.py -s 06_drop_ions.gro -o 10_restraint_coords.gro -x 12.5 -y 12.5 -z 12.5
+../scripts/waters_to_origin.py -s 06_drop_ions.gro -o restraint_coords.gro -x 12.5 -y 12.5 -z 12.5
 # Change topology such that our modified restrained FF for water is included instead of the default
-cp 07_topol.top 10_topol.top
+cp em.top nvt.top
 # Create temporary file with new line in place
-cat 10_topol.top | sed -e "s/#include \"oplsaa.ff\/tip3p.itp\"/#include \".\/tip3p.itp\"/" > tmp.top
+cat nvt.top | sed -e "s/#include \"oplsaa.ff\/tip3p.itp\"/#include \".\/tip3p.itp\"/" > tmp.top
 # Replace the original topology with the temporary file
-mv tmp.top 10_topol.top
+mv tmp.top nvt.top
 # Prepare run file
-gmx grompp -f ../mdp/nvt.mdp -r 10_restraint_coords.gro -c em.gro -p 10_topol.top -o nvt.tpr
+gmx grompp -f ../mdp/nvt.mdp -r restraint_coords.gro -c em.gro -p nvt.top -o nvt.tpr
 #gmx grompp -f $DIR/mdp/nvt.mdp -c em.gro -p topol.top -o nvt.tpr
