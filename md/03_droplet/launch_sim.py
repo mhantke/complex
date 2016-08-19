@@ -53,6 +53,8 @@ if __name__ == "__main__":
           "12_nvt_post",
           "13_npt_pre",
           "14_npt.sh",
+          "15_sim_pre",
+          "16_sim.sh",
    ]
    links = exs + ["env", "input", "itp", "mdp", "env", "scripts"]
  
