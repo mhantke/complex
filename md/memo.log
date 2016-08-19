@@ -241,7 +241,7 @@ Segfaults:
 mpirun noticed that process rank 2 with PID 23574 on node c003 exited on signal 11 (Segmentation fault).
 "
 
-2016/08/18
+[2016/08/18]
 
 Using newly compiled GROMACS 2016 (on node c022)
 
@@ -316,3 +316,94 @@ step 50000, remaining wall clock time:     0 s
 Performance:        7.858        3.054
 "
 
+[2016/08/19]
+
+NPT equilibration worked for the first time with this config:
+
+Input:
+"
+#!/bin/bash
+#SBATCH --exclude=c002,c012
+#SBATCH --nodelist=c022
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH --partition=c
+#SBATCH --exclusive
+#SBATCH --job-name=gmx
+#SBATCH --output=/home/hantke/complex/md/03_droplet/test2016/run.log
+#SBATCH --workdir=/home/hantke/complex/md/03_droplet/test2016
+source ./env
+cd out/
+gmx mdrun -deffnm npt -v 
+"
+
+Output:
+"
+GROMACS:      gmx mdrun, version 2016
+Executable:   /home/hantke/local_gromacs_2016//bin/gmx
+Data prefix:  /home/hantke/local_gromacs_2016/
+Working dir:  /home/hantke/complex/md/03_droplet/test2016/out
+Command line:
+  gmx mdrun -deffnm npt -v
+
+
+Running on 1 node with total 12 cores, 24 logical cores, 1 compatible GPU
+Hardware detected:
+  CPU info:
+    Vendor: Intel
+    Brand:  Intel(R) Xeon(R) CPU E5-2620 v2 @ 2.10GHz
+    SIMD instructions most likely to fit this hardware: AVX_256
+    SIMD instructions selected at GROMACS compile time: AVX_256
+
+  Hardware topology: Basic
+  GPU info:
+    Number of GPUs detected: 1
+    #0: NVIDIA GeForce GTX TITAN Black, compute cap.: 3.5, ECC:  no, stat: compatible
+
+Reading file npt.tpr, VERSION 2016 (single precision)
+Changing nstlist from 10 to 40, rlist from 1 to 1.048
+
+
+Non-default thread affinity set, disabling internal thread affinity
+Using 1 MPI thread
+Using 24 OpenMP threads 
+
+1 compatible GPU is present, with ID 0
+1 GPU auto-selected for this run.
+Mapping of GPU ID to the 1 PP rank in this node: 0
+
+
+WARNING: This run will generate roughly 6895 Mb of data
+
+starting mdrun 'UBIQUITIN in water'
+50000 steps,    200.0 ps.
+step   80: timed with pme grid 160 160 160, coulomb cutoff 1.000: 23468.3 M-cycles
+step  160: timed with pme grid 128 128 128, coulomb cutoff 1.221: 15686.5 M-cycles
+step  240: timed with pme grid 112 112 112, coulomb cutoff 1.395: 13705.8 M-cycles
+step  320: timed with pme grid 100 100 100, coulomb cutoff 1.562: 12202.0 M-cycles
+step  400: timed with pme grid 84 84 84, coulomb cutoff 1.860: 10397.5 M-cycles
+step  480: timed with pme grid 72 72 72, coulomb cutoff 2.170: 9757.9 M-cycles
+step  560: timed with pme grid 64 64 64, coulomb cutoff 2.441: 9197.7 M-cycles
+step  640: timed with pme grid 56 56 56, coulomb cutoff 2.790: 9169.1 M-cycles
+step  720: timed with pme grid 48 48 48, coulomb cutoff 3.255: 11550.8 M-cycles
+step  800: timed with pme grid 52 52 52, coulomb cutoff 3.005: 9542.5 M-cycles
+step  880: timed with pme grid 56 56 56, coulomb cutoff 2.790: 9142.9 M-cycles
+step  960: timed with pme grid 60 60 60, coulomb cutoff 2.604: 9223.4 M-cycles
+step 1040: timed with pme grid 64 64 64, coulomb cutoff 2.441: 9241.6 M-cycles
+step 1120: timed with pme grid 72 72 72, coulomb cutoff 2.170: 9755.2 M-cycles
+step 1200: timed with pme grid 80 80 80, coulomb cutoff 1.953: 10044.8 M-cycles
+              optimal pme grid 56 56 56, coulomb cutoff 2.790
+step 49900, remaining wall clock time:    10 s          
+Writing final coordinates.
+step 50000, remaining wall clock time:     0 s          
+NOTE: 10 % of the run time was spent in pair search,
+      you might want to increase nstlist (this has no effect on accuracy)
+
+
+               Core t (s)   Wall t (s)        (%)
+       Time:   131341.610     5472.567     2400.0
+                         1h31:12
+                 (ns/day)    (hour/ns)
+Performance:        3.158        7.601
+"
