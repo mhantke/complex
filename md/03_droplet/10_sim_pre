@@ -1,7 +1,7 @@
 #!/bin/bash
 source ./env
 cd out/
-cp npt.top sim.top
+cp nvt.top sim.top
 # npt.cpt allows to continue simulation from exactly the same point
 # npt.gro = only positions and velocities
-gmx grompp -f ../mdp/sim.mdp -c npt.gro -t npt.cpt -p sim.top -o sim.tpr
+gmx grompp -f sim.mdp -c nvt.gro -t nvt.cpt -p sim.top -o sim.tpr

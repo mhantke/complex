@@ -1,5 +1,0 @@
-#!/bin/bash
-source ./env
-cd out/
-# 18 nm droplet with 7 nm space (PBC)
-gmx editconf -f 01_no_sol.gro -o 02_box.gro -c -box 25.0 25.0 25.0 -bt cubic

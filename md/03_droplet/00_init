@@ -1,7 +1,15 @@
 #!/bin/bash
+source ./env
+
 rm -r out
 mkdir out
-cp input/00_init.gro out/00_init.gro
-cp input/00_init.tpr out/00_init.tpr
-cp input/00_init_no_sol.top out/00_topol.top
+cp input/1ubq.pdb out/init.pdb
 cp itp/*.itp out
+cp mdp/*.mdp out
+
+cd out
+
+grep -v ^HETATM init.pdb > tmp.pdb
+mv tmp.pdb init.pdb
+
+gmx pdb2gmx -f init.pdb -o init.gro -p init.top -i init.itp -water tip3p -ff amber99sb-ildn -vsite hydrogens

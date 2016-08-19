@@ -1,7 +1,11 @@
 # Intel MPI
 #source /home/hantke/local_intel/parallel_studio_xe_2016.2.062/compilers_and_libraries_2016/linux/mpi/bin64/mpivars.sh
+
 # Gromacs 2016
 source /home/hantke/local_gromacs_2016/bin/GMXRC.bash
-#alias gmx_mpi="gmx"
 #source /home/hantke/local_gromacs/bin/GMXRC
-#export GMX_OUTDIR=/scratch/fhgfs/hantke/complex/03_diffusion/
+
+# Options
+export GMXCPX_OUTDIR="/scratch/fhgfs/hantke/complex/03_diffusion/"
+export GMXCPX_BOX_SIZE="45.0"
+export GMXCPX_BOX_CENTER="22.5"

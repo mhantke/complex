@@ -1,5 +1,0 @@
-#!/bin/bash
-source ./env
-cd out/
-echo "Choose: 15 0"
-gmx energy -f nvt.edr -o temperature.xvg

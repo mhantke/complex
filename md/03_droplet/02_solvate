@@ -1,0 +1,5 @@
+#!/bin/bash
+source ./env
+cd out/
+cp init.top solvate.top
+gmx solvate -cp box.gro -cs spc216.gro -p solvate.top -o solvate.gro

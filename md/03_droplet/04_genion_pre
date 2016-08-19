@@ -1,0 +1,7 @@
+#!/bin/bash
+source ./env
+cd out/
+# preprocessor grompp
+# ions.tpr: binary format for genion
+cp sphere.top genions_pre.top
+gmx grompp -f genion.mdp -c sphere.gro -p genions_pre.top -o genions_pre.tpr

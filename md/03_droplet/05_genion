@@ -1,0 +1,11 @@
+#!/bin/bash
+source ./env
+cd out/
+# Physiological NaCl concentration: 0.154 M
+N_NACL="$(../scripts/calculate_nr_ions.py -s 04_sphere.gro -c 0.154)"
+echo "We have to add $N_NACL NaCl"
+# Run genion and replace waters by Na+ and Cl-
+cp genion_pre.top genion.top
+gmx genion -s genion_pre.tpr -o genion.gro -p genion.top -np $N_NACL -nn $N_NACL<<EOF
+13
+EOF

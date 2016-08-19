@@ -1,0 +1,8 @@
+#!/bin/bash
+source ./env
+cd out/
+# 18 nm droplet with 7 nm space (PBC)
+#gmx editconf -f 00_init.gro -o 02_box.gro -c -box 25.0 25.0 25.0 -bt cubic
+# Save COM calculation for pulling requires box size 2x diameter or larger, adding a little space
+gmx editconf -f init.gro -o box.gro -c -box $GMXCPX_BOX_SIZE $GMXCPX_BOX_SIZE $GMXCPX_BOX_SIZE -bt cubic
+

@@ -1,7 +1,0 @@
-#!/bin/bash
-source ./env
-cd out/
-# preprocessor grompp
-# ions.tpr: binary format for genion
-cp 04_topol.top 05_topol.top
-gmx grompp -f ../mdp/ions.mdp -c 04_drop.gro -p 05_topol.top -o 05_ions.tpr

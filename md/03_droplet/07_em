@@ -1,4 +1,5 @@
 #!/bin/bash
 source ./env
-cd out/
+cd out
+gmx mdrun -v -deffnm em
 #gmx energy -f em.edr -o potential.xvg 

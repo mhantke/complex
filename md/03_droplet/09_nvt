@@ -1,0 +1,6 @@
+#!/bin/bash
+source ./env
+cd out
+gmx mdrun -deffnm nvt -v 
+#echo "Choose: 15 0"
+#gmx energy -f nvt.edr -o temperature.xvg

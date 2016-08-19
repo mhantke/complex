@@ -1,6 +1,0 @@
-#!/bin/bash
-source ./env
-cd out/
-# Creates binary for minimising
-cp 06_topol.top em.top
-gmx grompp -f ../mdp/em.mdp -c 06_drop_ions.gro -p em.top -o em.tpr
