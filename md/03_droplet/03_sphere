@@ -6,14 +6,17 @@ gmx trjorder -f solvate.gro -s solvate.gro -o sphere.gro -com -da 0 -nshell sphe
 1
 13
 EOF
-# Read number of included molecules in drop
+# Read number of molecules in drop from XVG file created by trjorder
 N_DROP="$(../scripts/last_value_xvg.py sphere.xvg)"
 # Count total number of water molecules in box
 N_TOT="$(../scripts/count_molecules.py -s sphere.gro -n SOL)"
+# We have to remove the difference
 N_REMOVE=$(( $N_TOT - $N_DROP ))
-# Remove waters
+# New and fresh TOP file
 cp solvate.top sphere.top
+# Remove waters
 ../scripts/remove_ordered_waters.py -s sphere.gro -o sphere.gro -p sphere.top -n $N_REMOVE
+# Some outputs
 echo "Total number of water molecules in box: $N_TOT"
 echo "Water molecules in the drop: $N_DROP"
 echo "Water molecules that were removed: $N_REMOVE"

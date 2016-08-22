@@ -1,15 +1,16 @@
 #!/bin/bash
 source ./env
-
+# Initialise and clear output directory
 rm -r out
 mkdir out
+# Copy files over into output directory
 cp input/1ubq.pdb out/init.pdb
-cp itp/*.itp out
-cp mdp/*.mdp out
-
+cp itp/*.itp out/
+cp mdp/*.mdp out/
+# Change wd to output directory
 cd out
-
+# Make a clean start, avoid complications: Remove waters from structure!
 grep -v ^HETATM init.pdb > tmp.pdb
 mv tmp.pdb init.pdb
-
+# Create initial top and gro file
 gmx pdb2gmx -f init.pdb -o init.gro -p init.top -i init.itp -water tip3p -ff amber99sb-ildn -vsite hydrogens
