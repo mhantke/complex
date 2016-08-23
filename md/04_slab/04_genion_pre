@@ -1,0 +1,7 @@
+#!/bin/bash
+source ./env
+cd out/
+cp slab.top genion_pre.top
+# Run preprocessor grompp
+# TPR: binary format for running genion ("run file")
+gmx grompp -f ions.mdp -c slab.gro -p genion_pre.top -o genion_pre.tpr

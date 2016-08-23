@@ -1,0 +1,6 @@
+#!/bin/bash
+source ./env
+cd out/
+cp genion.top em.top
+# Creates binary for minimising energy of the system
+gmx grompp -f em.mdp -c genion.gro -p em.top -o em.tpr

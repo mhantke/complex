@@ -1,0 +1,6 @@
+#!/bin/bash
+source ./env
+cd out
+# Save COM calculation for pulling requires box size 2x diameter or larger, adding a little space
+gmx editconf -f init.gro -o box.gro -c -box $GMXCPX_BOX_A $GMXCPX_BOX_B $GMXCPX_BOX_T -bt triclinic -angles 90 90 60
+

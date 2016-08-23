@@ -1,0 +1,6 @@
+#!/bin/bash
+source ./env
+cd out/
+cp solvate.top slab.top
+gmx editconf -f solvate.gro -o slab.gro -c -box $GMXCPX_BOX_A $GMXCPX_BOX_B $GMXCPX_BOX_C -bt triclinic -angles 90 90 60
+gmx editconf -f slab.gro -o slab.pdb

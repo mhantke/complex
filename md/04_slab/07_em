@@ -3,4 +3,5 @@ source ./env
 cd out
 gmx mdrun -v -deffnm em
 #gmx energy -f em.edr -o potential.xvg 
+# For visual inspection
 gmx editconf -f em.gro -o em.pdb

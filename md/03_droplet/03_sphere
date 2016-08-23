@@ -16,6 +16,8 @@ N_REMOVE=$(( $N_TOT - $N_DROP ))
 cp solvate.top sphere.top
 # Remove waters
 ../scripts/remove_ordered_waters.py -s sphere.gro -o sphere.gro -p sphere.top -n $N_REMOVE
+# Create PDB for visual inspection in pymol for ex.
+gmx editconf -f sphere.gro -o sphere.pdb
 # Some outputs
 echo "Total number of water molecules in box: $N_TOT"
 echo "Water molecules in the drop: $N_DROP"

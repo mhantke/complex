@@ -4,3 +4,4 @@ cd out
 gmx mdrun -deffnm nvt -v 
 #echo "Choose: 15 0"
 #gmx energy -f nvt.edr -o temperature.xvg
+gmx editconf -f nvt.gro -o nvt.pdb

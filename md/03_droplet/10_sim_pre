@@ -4,4 +4,5 @@ cd out/
 cp nvt.top sim.top
 # npt.cpt allows to continue simulation from exactly the same point
 # npt.gro = only positions and velocities
-gmx grompp -f sim.mdp -c nvt.gro -t nvt.cpt -p sim.top -o sim.tpr
+# Allow for one warning that occurs because we remove rotation in a system with periodic boundary conditions
+gmx grompp -f sim.mdp -c nvt.gro -t nvt.cpt -p sim.top -o sim.tpr -maxwarn 1
