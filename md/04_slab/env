@@ -2,13 +2,16 @@
 #source /home/hantke/local_intel/parallel_studio_xe_2016.2.062/compilers_and_libraries_2016/linux/mpi/bin64/mpivars.sh
 
 # Gromacs 2016
-#source /home/hantke/local_gromacs_2016/bin/GMXRC.bash
-source /home/hantke/local_gromacs/bin/GMXRC.bash
+source /home/hantke/local_gromacs_2016/bin/GMXRC.bash
+# Gromacs 5.1.1
+#source /home/hantke/local_gromacs/bin/GMXRC.bash
 
 # Options
 export GMXCPX_OUTDIR="/scratch/fhgfs/hantke/complex/04_slab/"
 export GMXCPX_BOX_A="6.5"
 export GMXCPX_BOX_B="6.5"
 export GMXCPX_BOX_T="18.0"
-export GMXCPX_BOX_C="25.0"
+export GMXCPX_BOX_C="54.0"
+export GMXCPX_BOX_C_HALF="27.0"
+
 

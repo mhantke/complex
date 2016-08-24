@@ -1,0 +1,17 @@
+#!/bin/bash
+export LOG_FILE="./out/08_nvt_pre.log"
+source ./log_to_file
+source ./env
+# go to output directory
+cd out/
+# Reposition waters to center of the box
+#../scripts/move_all_atoms.py -f genion.gro -o restraint_coords.gro -x 0.0 -y 0.0 -z $GMXCPX_BOX_LAYER_CENTER_Z
+# Copy over topology
+cp em.top nvt.top
+# Replace includes of ITPs
+# -i.bak makes sure a backup file is created before overwriting changes
+#cat nvt.top | sed -i.bak -e "s/#include \"gromos53a6.ff\/tip3p.itp\"/#include \".\/tip3p.itp\"/" > nvt.top
+#cat nvt.top | sed -i.bak -e "s/#include \"gromos53a6.ff\/ions.itp\"/#include \".\/ions.itp\"/" > nvt.top
+# Prepare run file
+gmx grompp -f nvt.mdp -c em.gro -p nvt.top -o nvt.tpr
+

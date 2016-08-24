@@ -13,17 +13,18 @@ if __name__ == "__main__":
    parser.add_argument('-o', '--output-folder', type=str, help="output folder", nargs='?', required=True)
    parser.add_argument('-s', '--start-at', type=int, help="start at given processing step")
    parser.add_argument('-i', '--single-step', type=int, help="run only single step")
-   parser.add_argument('-m', '--mode', type=str, help="simulation mode", default="pull")
-   parser.add_argument('-N', '--node', type=str, help="node", default="c022")
+   #parser.add_argument('-m', '--mode', type=str, help="simulation mode", default="pull")
+   parser.add_argument('-N', '--node', type=str, help="node")
+   parser.add_argument('-G', '--gpus', type=int, help="number of GPUs", default=4)
    if(len(sys.argv) == 1):
       parser.print_help()
       sys.exit(0)
    args = parser.parse_args()
 
-   allowed_modes = ["pull"]
-   if args.mode not in allowed_modes:
-      print "ERROR: Invalid mode: %s (allowed modes: %s)" % (args.mode, str(allowed_modes))
-      sys.exit(1)
+   #allowed_modes = ["pull"]
+   #if args.mode not in allowed_modes:
+   #   print "ERROR: Invalid mode: %s (allowed modes: %s)" % (args.mode, str(allowed_modes))
+   #   sys.exit(1)
 
    output_folder = os.path.abspath(args.output_folder)
 
@@ -31,24 +32,35 @@ if __name__ == "__main__":
       do("rm -rf %s" % output_folder)
       do("mkdir %s" % output_folder)
       do("mkdir %s/out" % output_folder)
+      i_log = 0
+   else:
+      logs = [f for f in os.listdir("%s" % output_folder) if f.startswith("run.log.")]
+      assert len(logs) > 0
+      logs.sort()
+      i_log = int(logs[-1].split(".")[-1]) + 1
 
+   logfile = "%s/run.log.%i" % (output_folder, i_log)
+   do("ln -sf run.log.%i %s/run.log" % (i_log, output_folder), comment="Writing symlink to new log file")
+      
    lines = []
    lines += ["#!/bin/bash\n",
-             "#SBATCH --exclude=c002,c012\n",
-             "#SBATCH --nodelist=%s\n" % args.node,
+             "#SBATCH --exclude=c001,c002,c003,c004,c005,c006,c007,c008,c009,c010,c011,c012,c013,c014,c015,c016,c017,c018\n",
              "#SBATCH --nodes=1\n",
              "#SBATCH --ntasks-per-node=1\n",
-             "#SBATCH --gres=gpu:3\n",
+             "#SBATCH --gres=gpu:%i\n" % args.gpus,
              "#SBATCH --partition=c\n",
              "#SBATCH --exclusive\n",
              "#SBATCH --job-name=gmx\n",
-             "#SBATCH --output=%s/run.log\n" % output_folder,
-             "#SBATCH --workdir=%s\n" % output_folder] 
+             "#SBATCH --output=%s\n" % logfile,
+             "#SBATCH --workdir=%s\n" % output_folder]
+
+   if args.node is not None:
+      lines.append("#SBATCH --nodelist=%s\n" % args.node)
    
    exs = ["00_init", 
           "01_box",
           "02_solvate",
-          "03_sphere",
+          "03_slab",
           "04_genion_pre",
           "05_genion",
           "06_em_pre",
@@ -59,22 +71,20 @@ if __name__ == "__main__":
           "11_sim",
    ]
 
-   links = exs + ["env", "input", "itp", "mdp", "env", "scripts"]
+   links = exs + ["input", "itp", "mdp", "scripts", "log_to_file"]
  
    for link in links:
       lines += ["ln -sf ../%s\n" % link]
-      
-   if args.mode == "pull":
-      lines += ["ln -sf sim_pull.mdp mdp/sim.mdp"]
+
+   cps = ["env"]
+
+   for cp in cps:
+      lines += ["cp -r ../%s ./\n" % cp]
+   
+   #if args.mode == "pull":
+   #   lines += ["ln -sf sim_pull.mdp mdp/sim.mdp"]
 
    if args.start_at is not None:
-      logs = [f for f in os.listdir("%s" % output_folder) if f.startswith("run.log.")]
-      if len(logs) > 0:
-         logs.sort()
-         i_log = int(logs[-1].split(".")[-1]) + 1
-      else:
-         i_log = 0
-      do("mv %s/run.log %s/run.log.%i" % (output_folder, output_folder, i_log), comment="Backing up old log file.")
       exs = [ex for ex in exs if int(ex[:2])>=args.start_at]
 
    if args.single_step is not None:

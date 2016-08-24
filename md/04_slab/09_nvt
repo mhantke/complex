@@ -1,0 +1,9 @@
+#!/bin/bash
+export LOG_FILE="./out/09_nvt.log"
+source ./log_to_file
+source ./env
+cd out
+gmx mdrun -deffnm nvt -v 
+#echo "Choose: 15 0"
+#gmx energy -f nvt.edr -o temperature.xvg
+gmx editconf -f nvt.gro -o nvt.pdb

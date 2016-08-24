@@ -49,7 +49,7 @@ DispCorr     = no	; do not account for cut-off vdW scheme
 gen_vel		= no		; Velocity generation is off 
 
 ; COM
-comm-mode = Angular
+comm-mode = Linear
 
 ; Pulling
 pull = yes
@@ -95,7 +95,7 @@ pull-coord1-geometry = distance
 pull-coord1-groups = 1 2
 
 ;(Y Y Y) Selects the dimensions that this pull coordinate acts on and that are printed to the output files when pull-print-components = yes. With pull-coord1-geometry = distance, only Cartesian components set to Y contribute to the distance. Thus setting this to Y Y N results in a distance in the x/y plane. With other geometries all dimensions with non-zero entries in pull-coord1-vec should be set to Y, the values for other dimensions only affect the output.
-pull-coord1-dim = Y Y Y
+pull-coord1-dim = N N Y
 
 ;(0.0 0.0 0.0) The pull reference position for use with an absolute reference.
 ;pull-coord1-origin
@@ -110,10 +110,13 @@ pull-coord1-start = no
 ;pull-coord1-init
 
 ;(0) [nm/ps] / [deg/ps] The rate of change of the reference position.
-pull-coord1-rate = 0.005 ; mnm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
+pull-coord1-rate = 0.005 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
 
 ;(0) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] The force constant. For umbrella pulling this is the harmonic force constant in kJ mol-1 nm-2 (or kJ mol-1 rad-2 for angles). For constant force pulling this is the force constant of the linear potential, and thus the negative (!) of the constant force in kJ mol-1 nm-1 (or kJ mol-1 rad-1 for angles). Note that for angles the force constant is expressed in terms of radians (while pull-coord1-init and pull-coord1-rate are expressed in degrees).
 pull-coord1-k = 2000 ; Force constant. Doesn’t matter much here, but should be large enough to keep the protein somewhat close to the (moving) reference point.
 
 ;(pull-k1) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] As pull-coord1-k, but for state B. This is only used when free-energy is turned on. The force constant is then (1 - lambda) * pull-coord1-k + lambda * pull-coord1-kB.
 ;pull-coord1-kB
+
+;(0) The reference atom for the treatment of periodic boundary conditions inside the group (this has no effect on the treatment of the pbc between groups). This option is only important when the diameter of the pull group is larger than half the shortest box vector. For determining the COM, all atoms in the group are put at their periodic image which is closest to pull-group1-pbcatom. A value of 0 means that the middle atom (number wise) is used. This parameter is not used with pull-group1-geometry cylinder. A value of -1 turns on cosine weighting, which is useful for a group of molecules in a periodic system, e.g. a water slab (see Engin et al. J. Chem. Phys. B 2010).
+pull-group1-pbcatom = -1

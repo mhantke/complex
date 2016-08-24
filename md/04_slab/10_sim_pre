@@ -1,0 +1,8 @@
+#!/bin/bash
+export LOG_FILE="./out/10_sim_pre.log"
+source ./log_to_file
+source ./env
+cd out/
+cp nvt.top sim.top
+gmx grompp -f sim.mdp -c nvt.gro -t nvt.cpt -p sim.top -o sim.tpr
+

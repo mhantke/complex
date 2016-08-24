@@ -1,4 +1,6 @@
 #!/bin/bash
+export LOG_FILE="./out/06_em_pre.log"
+source ./log_to_file
 source ./env
 cd out/
 cp genion.top em.top

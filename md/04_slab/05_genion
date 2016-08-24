@@ -1,4 +1,6 @@
 #!/bin/bash
+export LOG_FILE="./out/05_genion.log"
+source ./log_to_file
 source ./env
 cd out/
 # Physiological NaCl concentration: 0.154 M

@@ -1,4 +1,6 @@
 #!/bin/bash
+export LOG_FILE="./out/07_em.log"
+source ./log_to_file
 source ./env
 cd out
 gmx mdrun -v -deffnm em

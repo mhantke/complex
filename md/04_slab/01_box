@@ -1,4 +1,6 @@
 #!/bin/bash
+export LOG_FILE="./out/01_box.log"
+source ./log_to_file
 source ./env
 cd out
 # Save COM calculation for pulling requires box size 2x diameter or larger, adding a little space

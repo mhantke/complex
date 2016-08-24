@@ -1,4 +1,6 @@
 #!/bin/bash
+export LOG_FILE="./out/00_init.log"
+source ./log_to_file
 source ./env
 # Initialise and clear output directory
 rm -r out
@@ -13,4 +15,4 @@ cd out
 grep -v ^HETATM init.pdb > tmp.pdb
 mv tmp.pdb init.pdb
 # Create initial top and gro file
-gmx pdb2gmx -f init.pdb -o init.gro -p init.top -i init.itp -water tip3p -ff amber99sb-ildn -vsite hydrogens
+gmx pdb2gmx -f init.pdb -o init.gro -p init.top -i init.itp -water spce -ff gromos53a6 -vsite hydrogens -ignh

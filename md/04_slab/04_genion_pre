@@ -1,4 +1,6 @@
 #!/bin/bash
+export LOG_FILE="./out/04_genion_pre.log"
+source ./log_to_file
 source ./env
 cd out/
 cp slab.top genion_pre.top

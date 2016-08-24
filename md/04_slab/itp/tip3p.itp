@@ -33,10 +33,14 @@ SOL		2
 
 #endif
 
-; ADDED BY US
+; POSITION RESTRAINT: LAYER
 [ position_restraints ]
 ; id func_type    g   r  k
-1    2            1   10 1000
-2    2            1   10 1000
-3    2            1   10 1000
+;1    2            1   10 1000
+;2    2            1   10 1000
+;3    2            1   10 1000
+; g = 5: Layer orthogonal to z axis
+1    2            5   10 1000
+2    2            5   10 1000
+3    2            5   10 1000
 
