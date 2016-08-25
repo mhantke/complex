@@ -110,7 +110,7 @@ pull-coord1-start = no
 ;pull-coord1-init
 
 ;(0) [nm/ps] / [deg/ps] The rate of change of the reference position.
-pull-coord1-rate = 0.005 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
+pull-coord1-rate = 0.00005 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
 
 ;(0) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] The force constant. For umbrella pulling this is the harmonic force constant in kJ mol-1 nm-2 (or kJ mol-1 rad-2 for angles). For constant force pulling this is the force constant of the linear potential, and thus the negative (!) of the constant force in kJ mol-1 nm-1 (or kJ mol-1 rad-1 for angles). Note that for angles the force constant is expressed in terms of radians (while pull-coord1-init and pull-coord1-rate are expressed in degrees).
 pull-coord1-k = 2000 ; Force constant. Doesn’t matter much here, but should be large enough to keep the protein somewhat close to the (moving) reference point.
