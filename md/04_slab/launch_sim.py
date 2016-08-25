@@ -26,6 +26,7 @@ if __name__ == "__main__":
    #   print "ERROR: Invalid mode: %s (allowed modes: %s)" % (args.mode, str(allowed_modes))
    #   sys.exit(1)
 
+   this_folder = os.path.dirname(os.path.realpath(__file__))
    output_folder = os.path.abspath(args.output_folder)
 
    if args.start_at is None and args.single_step is None:
@@ -71,15 +72,13 @@ if __name__ == "__main__":
           "11_sim",
    ]
 
-   links = exs + ["input", "itp", "mdp", "scripts", "log_to_file"]
+   cps = exs + ["env", "input", "itp", "mdp", "scripts", "log_to_file"]
  
-   for link in links:
-      lines += ["ln -sf ../%s\n" % link]
-
-   cps = ["env"]
+   #for link in links:
+   #   lines += ["ln -sf %s/%s\n" % (this_folder, link)]
 
    for cp in cps:
-      lines += ["cp -r ../%s ./\n" % cp]
+      lines += ["cp -r -L %s/%s ./\n" % (this_folder, cp)]
    
    #if args.mode == "pull":
    #   lines += ["ln -sf sim_pull.mdp mdp/sim.mdp"]
