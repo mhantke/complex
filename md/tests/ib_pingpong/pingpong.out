@@ -1,0 +1,107 @@
+srun: cluster configuration lacks support for cpu binding
+[c007][[25792,1],0][btl_openib_ini.c:170:ompi_btl_openib_ini_query] Querying INI files for vendor 0x02c9, part ID 4099
+[c007][[25792,1],0][btl_openib_ini.c:189:ompi_btl_openib_ini_query] Found corresponding INI values: Mellanox Hermon
+[c007][[25792,1],0][btl_openib_ini.c:170:ompi_btl_openib_ini_query] Querying INI files for vendor 0x0000, part ID 0
+[c007][[25792,1],0][btl_openib_ini.c:189:ompi_btl_openib_ini_query] Found corresponding INI values: default
+[c010][[25792,1],1][btl_openib_ini.c:170:ompi_btl_openib_ini_query] Querying INI files for vendor 0x02c9, part ID 4099
+[c010][[25792,1],1][btl_openib_ini.c:189:ompi_btl_openib_ini_query] Found corresponding INI values: Mellanox Hermon
+[c010][[25792,1],1][btl_openib_ini.c:170:ompi_btl_openib_ini_query] Querying INI files for vendor 0x0000, part ID 0
+[c010][[25792,1],1][btl_openib_ini.c:189:ompi_btl_openib_ini_query] Found corresponding INI values: default
+[c007][[25792,1],0][btl_openib_ini.c:170:ompi_btl_openib_ini_query] Querying INI files for vendor 0x02c9, part ID 4099
+[c007][[25792,1],0][btl_openib_ini.c:189:ompi_btl_openib_ini_query] Found corresponding INI values: Mellanox Hermon
+--------------------------------------------------------------------------
+WARNING: It appears that your OpenFabrics subsystem is configured to only
+allow registering part of your physical memory.  This can cause MPI jobs to
+run with erratic performance, hang, and/or crash.
+
+This may be caused by your OpenFabrics vendor limiting the amount of
+physical memory that can be registered.  You should investigate the
+relevant Linux kernel module parameters that control how much physical
+memory can be registered, and increase them to allow registering all
+physical memory on your machine.
+
+See this Open MPI FAQ item for more information on these Linux kernel module
+parameters:
+
+    http://www.open-mpi.org/faq/?category=openfabrics#ib-locked-pages
+
+  Local host:              c007
+  Registerable memory:     32768 MiB
+  Total memory:            65500 MiB
+
+Your MPI job will continue, but may be behave poorly and/or hang.
+--------------------------------------------------------------------------
+[c010][[25792,1],1][btl_openib_ini.c:170:ompi_btl_openib_ini_query] Querying INI files for vendor 0x02c9, part ID 4099
+[c010][[25792,1],1][btl_openib_ini.c:189:ompi_btl_openib_ini_query] Found corresponding INI values: Mellanox Hermon
+ benchmarks to run PingPong 
+#---------------------------------------------------
+#    Intel (R) MPI Benchmark Suite V3.2.4, MPI-1 part    
+#---------------------------------------------------
+# Date                  : Mon Aug 15 14:54:45 2016
+# Machine               : x86_64
+# System                : Linux
+# Release               : 2.6.32-431.29.2.el6.x86_64
+# Version               : #1 SMP Tue Sep 9 13:45:55 CDT 2014
+# MPI Version           : 3.0
+# MPI Thread Environment: 
+
+# New default behavior from Version 3.2 on:
+
+# the number of iterations per message size is cut down 
+# dynamically when a certain run time (per message size sample) 
+# is expected to be exceeded. Time limit is defined by variable 
+# "SECS_PER_SAMPLE" (=> IMB_settings.h) 
+# or through the flag => -time 
+  
+
+
+# Calling sequence was: 
+
+# /usr/lib64/openmpi/bin/mpitests-IMB-MPI1 PingPong
+
+# Minimum message length in bytes:   0
+# Maximum message length in bytes:   4194304
+#
+# MPI_Datatype                   :   MPI_BYTE 
+# MPI_Datatype for reductions    :   MPI_FLOAT
+# MPI_Op                         :   MPI_SUM  
+#
+#
+
+# List of Benchmarks to run:
+
+# PingPong
+
+#---------------------------------------------------
+# Benchmarking PingPong 
+# #processes = 2 
+#---------------------------------------------------
+       #bytes #repetitions      t[usec]   Mbytes/sec
+            0         1000         1.25         0.00
+            1         1000         1.32         0.72
+            2         1000         1.32         1.44
+            4         1000         1.32         2.90
+            8         1000         1.36         5.62
+           16         1000         1.36        11.25
+           32         1000         1.40        21.85
+           64         1000         1.45        42.11
+          128         1000         2.12        57.62
+          256         1000         2.34       104.44
+          512         1000         2.56       191.06
+         1024         1000         3.00       325.74
+         2048         1000         3.95       494.27
+         4096         1000         4.77       819.45
+         8192         1000         6.54      1195.30
+        16384         1000         9.16      1705.87
+        32768         1000        13.48      2317.99
+        65536          640        22.31      2800.92
+       131072          320        39.26      3183.80
+       262144          160        73.87      3384.55
+       524288           80       142.51      3508.45
+      1048576           40       280.17      3569.20
+      2097152           20       555.27      3601.85
+      4194304           10      1106.64      3614.53
+
+
+# All processes entering MPI_Finalize
+
