@@ -1,0 +1,12 @@
+#!/bin/bash
+export LOG_FILE="./out/01_sim_pre.log"
+source ./log_to_file
+source ./env
+cd out/
+cp snap.top sim.top
+cp snap.gro sim.gro
+cp sim.mdp tmp.mdp
+cat tmp.mdp | sed "s/@REF/$GMXCPX_D0/" > sim.mdp
+rm tmp.mdp
+gmx grompp -f sim.mdp -c sim.gro -p sim.top -o sim.tpr
+

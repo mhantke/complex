@@ -1,16 +1,16 @@
 ; Run parameters
 integrator	= md		; leap-frog integrator
-nsteps		  = 50000000	; 200 ns 
+nsteps		  = 25000000	; 100 ns 
 dt		        = 0.004	  ; 4 fs
 
 ; Output control
-nstxout		        = 250000		; save coordinates every 1.0 ns
-nstvout			= 250000      	        ; save velocities every 1.0 ns
+nstxout		        = 2500000		; save coordinates every 10.0 ns
+nstvout			= 2500000      	        ; save velocities every 10.0 ns
 nstenergy		= 250000  	        ; save energies every 1.0 ns
 nstlog			= 250000   	        ; update log file every 1.0 ns
-nstxout-compressed      = 25000     		; save compressed coordinates every 0.1 ns
+nstxout-compressed      = 250000     		; save compressed coordinates every 1.0 ns
                           	           	; nstxout-compressed replaces nstxtcout
-compressed-x-grps   = Protein 			; replaces xtc-grps
+compressed-x-grps   = System 			; replaces xtc-grps
 
 ; Bond parameters
 continuation	        = yes		; Restarting after NPT 
@@ -61,16 +61,16 @@ pull-print-ref-value = yes
 pull-print-components = no
 
 ;(50) frequency for writing out the COMs of all the pull group (0 is never)
-pull-nstxout = 1000000
+pull-nstxout = 250
 
 ;(50) frequency for writing out the force of all the pulled group (0 is never)
-pull-nstfout =  500000
+pull-nstfout =  250
 
 ;(1) The number of pull groups, not including the absolute reference group, when used. Pull groups can be reused in multiple pull coordinates. Below only the pull options for group 1 are given, further groups simply increase the group index number.
-pull-ngroups = 2;
+pull-ngroups = 2
 
 ;(1) The number of pull coordinates. Below only the pull options for coordinate 1 are given, further coordinates simply increase the coordinate index number.
-pull-ncoords = 1;
+pull-ncoords = 1
 
 ;The name of the pull group, is looked up in the index file or in the default groups to obtain the atoms involved.
 pull-group1-name = Protein
@@ -107,13 +107,14 @@ pull-coord1-dim = N N Y
 pull-coord1-start = no
 
 ;(0.0) [nm] / [deg] The reference distance at t=0.
-;pull-coord1-init
+pull-coord1-init = @REF
 
 ;(0) [nm/ps] / [deg/ps] The rate of change of the reference position.
-pull-coord1-rate = 0.00005 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
+;pull-coord1-rate = 0.00005 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
+pull-coord1-rate = 0.0 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
 
 ;(0) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] The force constant. For umbrella pulling this is the harmonic force constant in kJ mol-1 nm-2 (or kJ mol-1 rad-2 for angles). For constant force pulling this is the force constant of the linear potential, and thus the negative (!) of the constant force in kJ mol-1 nm-1 (or kJ mol-1 rad-1 for angles). Note that for angles the force constant is expressed in terms of radians (while pull-coord1-init and pull-coord1-rate are expressed in degrees).
-pull-coord1-k = 2000 ; Force constant. Doesn’t matter much here, but should be large enough to keep the protein somewhat close to the (moving) reference point.
+pull-coord1-k = 10000 ; Force constant. Doesn’t matter much here, but should be large enough to keep the protein somewhat close to the (moving) reference point.
 
 ;(pull-k1) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] As pull-coord1-k, but for state B. This is only used when free-energy is turned on. The force constant is then (1 - lambda) * pull-coord1-k + lambda * pull-coord1-kB.
 ;pull-coord1-kB

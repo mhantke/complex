@@ -7,11 +7,4 @@ source /home/hantke/local_gromacs_2016/bin/GMXRC.bash
 #source /home/hantke/local_gromacs/bin/GMXRC.bash
 
 # Options
-export GMXCPX_OUTDIR="/scratch/fhgfs/hantke/complex/04_slab/"
-export GMXCPX_BOX_A="6.5"
-export GMXCPX_BOX_B="6.5"
-export GMXCPX_BOX_T="18.0"
-export GMXCPX_BOX_C="54.0"
-export GMXCPX_BOX_C_HALF="27.0"
-
 

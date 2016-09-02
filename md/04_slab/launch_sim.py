@@ -48,12 +48,14 @@ if __name__ == "__main__":
              "#SBATCH --exclude=c001,c002,c003,c004,c005,c006,c007,c008,c009,c010,c011,c012,c013,c014,c015,c016,c017,c018\n",
              "#SBATCH --nodes=1\n",
              "#SBATCH --ntasks-per-node=1\n",
-             "#SBATCH --gres=gpu:%i\n" % args.gpus,
              "#SBATCH --partition=c\n",
              "#SBATCH --exclusive\n",
              "#SBATCH --job-name=gmx\n",
              "#SBATCH --output=%s\n" % logfile,
              "#SBATCH --workdir=%s\n" % output_folder]
+
+   if args.gpus > 0:
+      lines.append("#SBATCH --gres=gpu:%i\n" % args.gpus)
 
    if args.node is not None:
       lines.append("#SBATCH --nodelist=%s\n" % args.node)
