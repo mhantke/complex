@@ -55,7 +55,7 @@ if __name__ == "__main__":
    cps = exs + ["itp", "mdp", "scripts", "log_to_file"]
    
    for x,t in zip(x_grid, t_grid):
-      output_folder_sub = output_folder + ("/snap_%.2fnm" % x)
+      output_folder_sub = output_folder + ("/snap_%2.2fnm" % x)
       i_log = 0
       logfile = "%s/run.log.%i" % (output_folder_sub, i_log)
       # Do necessary initialisations
@@ -76,8 +76,9 @@ if __name__ == "__main__":
                 "#SBATCH --nodes=1\n",
                 "#SBATCH --ntasks-per-node=1\n",
                 #"#SBATCH --partition=c\n",
+                "#SBATCH --partition=a\n",
                 "#SBATCH --exclusive\n",
-                "#SBATCH --job-name=gmx%02i\n" % int(round(x)),
+                "#SBATCH --job-name=gmx%02.1f\n" % (round(x,1)),
                 "#SBATCH --output=%s\n" % logfile,
                 "#SBATCH --workdir=%s\n" % output_folder_sub]
       if args.gpus > 0:
