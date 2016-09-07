@@ -6,7 +6,7 @@ import gmx_tools.xvg
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Extract snapshots from XTC file')
-    parser.add_argument('-f', '--trr-filename', type=str, help="xtc file ", required=True)
+    parser.add_argument('-f', '--trr-filename', type=str, help="trr file ", required=True)
     #parser.add_argument('-f', '--xtc-filename', type=str, help="xtc file ", required=True)
     parser.add_argument('-s', '--tpr-filename', type=str, help="tpr file ", required=True)
     parser.add_argument('-x', '--xvg-filename', type=str, help="xvg file with positions (typically \'pullx.xvg\')", required=True)
