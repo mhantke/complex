@@ -17,6 +17,7 @@ if __name__ == "__main__":
    parser.add_argument('-i', '--input-folder', type=str, help="input folder where the pulling was run from", nargs='?', required=True)
    parser.add_argument('-o', '--output-folder', type=str, help="output folder", nargs='?', required=True)
    parser.add_argument('-n', '--number-of-steps', type=int, help="number of sampling steps", required=True)
+   parser.add_argument('-s', '--min-distance-nm', type=float, help="minimum distance in unit nanometer", default=0.0)
    parser.add_argument('-d', '--max-distance-nm', type=float, help="maximum distance in unit nanometer", required=True)
    parser.add_argument('-N', '--node', type=str, help="node")
    parser.add_argument('-G', '--gpus', type=int, help="number of GPUs", default=4)
@@ -46,7 +47,7 @@ if __name__ == "__main__":
       
    [time, xcom, xset] = gmx_tools.xvg.read_xvg(xvg_filename, ncols=3)
     
-   x_grid = np.linspace(0, args.max_distance_nm, args.number_of_steps)
+   x_grid = np.linspace(args.min_distance_nm, args.max_distance_nm, args.number_of_steps)
    t_grid = np.interp(x_grid, xcom, time)
 
    exs = ["00_init", 
