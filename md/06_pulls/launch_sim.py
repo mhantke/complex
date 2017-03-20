@@ -96,7 +96,7 @@ if __name__ == "__main__":
                 "#SBATCH --exclude=c002,c006,c012\n",
                 "#SBATCH --nodes=1\n",
                 "#SBATCH --ntasks-per-node=1\n",
-                #"#SBATCH --partition=c\n",
+                "#SBATCH --partition=c\n",
                 #"#SBATCH --partition=a\n",
                 "#SBATCH --exclusive\n",
                 "#SBATCH --job-name=gmx%03ius\n" % (int(round(t/1000))),
