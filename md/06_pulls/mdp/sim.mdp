@@ -1,0 +1,122 @@
+; Run parameters
+integrator	= md		; leap-frog integrator
+nsteps		  = 50000000	; 200 ns 
+dt		        = 0.004	  ; 4 fs
+
+; Output control
+nstxout		        = 250000		; save coordinates every 1.0 ns
+nstvout			= 250000      	        ; save velocities every 1.0 ns
+nstenergy		= 250000  	        ; save energies every 1.0 ns
+nstlog			= 250000   	        ; update log file every 1.0 ns
+nstxout-compressed      = 25000     		; save compressed coordinates every 0.1 ns
+                          	           	; nstxout-compressed replaces nstxtcout
+compressed-x-grps   = Protein 			; replaces xtc-grps
+
+; Bond parameters
+continuation	        = yes		; Restarting after NPT 
+constraint_algorithm    = lincs		    ; holonomic constraints 
+constraints		            = all-bonds		; all bonds (even heavy atom-H bonds) constrained
+lincs_iter			                = 1	      ; accuracy of LINCS
+lincs_order					            = 4		     ; also related to accuracy
+
+; Neighborsearching
+cutoff-scheme   = Verlet
+ns_type		      = grid		; search neighboring grid cells
+nstlist		      	    = 10	    ; 20 fs, largely irrelevant with Verlet scheme
+rcoulomb		        = 1.0	      ; short-range electrostatic cutoff (in nm)
+rvdw				      = 1.0   	; short-range van der Waals cutoff (in nm)
+
+; Electrostatics
+coulombtype	          = PME		  ; Treatment of long range electrostatic interactions
+coulomb-modifier = Potential-shift-Verlet
+
+; Boundary
+pbc				              = xyz 	    	; Periodic Boundary Conditions (yes/no)
+
+; Temperature coupling is on
+tcoupl	      	       = V-rescale	            ; modified Berendsen thermostat
+tc-grps		       	 = Protein Non-Protein	    ; two coupling groups - more accurate
+tau_t			   = 0.1     0.1	            ; time constant, in ps
+ref_t			     = 300     300		            ; reference temperature, one for each group, in K
+
+; Pressure coupling is off
+pcoupl	   	    = no		; no pressure coupling in NVT
+
+; Dispersion correction (far contributions, we believe that we do not need this)
+DispCorr     = no	; do not account for cut-off vdW scheme
+
+; Velocity generation
+gen_vel		= no		; Velocity generation is off 
+
+; COM
+comm-mode = Linear
+
+; Pulling
+pull = yes
+
+;pull-print-com = yes
+
+pull-print-ref-value = yes
+
+pull-print-components = no
+
+;(50) frequency for writing out the COMs of all the pull group (0 is never)
+pull-nstxout = 1000000
+
+;(50) frequency for writing out the force of all the pulled group (0 is never)
+pull-nstfout =  500000
+
+;(1) The number of pull groups, not including the absolute reference group, when used. Pull groups can be reused in multiple pull coordinates. Below only the pull options for group 1 are given, further groups simply increase the group index number.
+pull-ngroups = 2;
+
+;(1) The number of pull coordinates. Below only the pull options for coordinate 1 are given, further coordinates simply increase the coordinate index number.
+pull-ncoords = 1;
+
+;The name of the pull group, is looked up in the index file or in the default groups to obtain the atoms involved.
+pull-group1-name = Protein
+pull-group2-name = Non-Protein
+
+;Optional relative weights which are multiplied with the masses of the atoms to give the total weight for the COM. The number should be 0, meaning all 1, or the number of atoms in the pull group.
+;pull-group1-weights
+;pull-group1-pbcatom
+;(0) The reference atom for the treatment of periodic boundary conditions inside the group (this has no effect on the treatment of the pbc between groups). This option is only important when the diameter of the pull group is larger than half the shortest box vector. For determining the COM, all atoms in the group are put at their periodic image which is closest to pull-group1-pbcatom. A value of 0 means that the middle atom (number wise) is used. This parameter is not used with pull-group1-geometry cylinder. A value of -1 turns on cosine weighting, which is useful for a group of molecules in a periodic system, e.g. a water slab (see Engin et al. J. Chem. Phys. B 2010).
+
+; type
+pull-coord1-type = umbrella
+;The name of the external module that provides the potential for the case where pull-coord1-type is external-potential.
+;pull-coord1-potential-provider
+;distance: Pull along the vector connecting the two groups. Components can be selected with pull-coord1-dim.
+;direction: Pull in the direction of pull-coord1-vec.
+;... mnore options available ...
+
+pull-coord1-geometry = distance
+
+;The group indices on which this pull coordinate will operate. The number of group indices required is geometry dependent. The first index can be 0, in which case an absolute reference of pull-coord1-origin is used. With an absolute reference the system is no longer translation invariant and one should think about what to do with the center of mass motion.
+pull-coord1-groups = 1 2
+
+;(Y Y Y) Selects the dimensions that this pull coordinate acts on and that are printed to the output files when pull-print-components = yes. With pull-coord1-geometry = distance, only Cartesian components set to Y contribute to the distance. Thus setting this to Y Y N results in a distance in the x/y plane. With other geometries all dimensions with non-zero entries in pull-coord1-vec should be set to Y, the values for other dimensions only affect the output.
+pull-coord1-dim = N N Y
+
+;(0.0 0.0 0.0) The pull reference position for use with an absolute reference.
+;pull-coord1-origin
+
+;(0.0 0.0 0.0) The pull direction. gmx grompp normalizes the vector.
+;pull-coord1-vec = 1.0 0.0 0.0
+
+;no : do not modify pull-coord1-init; yes : add the COM distance of the starting conformation to pull-coord1-init
+pull-coord1-start = no
+
+;(0.0) [nm] / [deg] The reference distance at t=0.
+;pull-coord1-init
+
+;(0) [nm/ps] / [deg/ps] The rate of change of the reference position.
+pull-coord1-rate = 0.00005 ; nm/ps. This means 10 nm over 200 ns. But I think we can run for a shorter time here.
+
+;(0) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] The force constant. For umbrella pulling this is the harmonic force constant in kJ mol-1 nm-2 (or kJ mol-1 rad-2 for angles). For constant force pulling this is the force constant of the linear potential, and thus the negative (!) of the constant force in kJ mol-1 nm-1 (or kJ mol-1 rad-1 for angles). Note that for angles the force constant is expressed in terms of radians (while pull-coord1-init and pull-coord1-rate are expressed in degrees).
+pull-coord1-k = 2000 ; Force constant. Doesn’t matter much here, but should be large enough to keep the protein somewhat close to the (moving) reference point.
+
+;(pull-k1) [kJ mol-1 nm-2] / [kJ mol-1 nm-1] / [kJ mol-1 rad-2] / [kJ mol-1 rad-1] As pull-coord1-k, but for state B. This is only used when free-energy is turned on. The force constant is then (1 - lambda) * pull-coord1-k + lambda * pull-coord1-kB.
+;pull-coord1-kB
+
+;(0) The reference atom for the treatment of periodic boundary conditions inside the group (this has no effect on the treatment of the pbc between groups). This option is only important when the diameter of the pull group is larger than half the shortest box vector. For determining the COM, all atoms in the group are put at their periodic image which is closest to pull-group1-pbcatom. A value of 0 means that the middle atom (number wise) is used. This parameter is not used with pull-group1-geometry cylinder. A value of -1 turns on cosine weighting, which is useful for a group of molecules in a periodic system, e.g. a water slab (see Engin et al. J. Chem. Phys. B 2010).
+pull-group1-pbcatom = -1

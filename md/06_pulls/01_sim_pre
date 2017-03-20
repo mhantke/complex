@@ -1,0 +1,8 @@
+#!/bin/bash
+export LOG_FILE="./out/01_sim_pre.log"
+source ./log_to_file
+source ./env
+cp input/snap.gro out/sim.gro
+cd out/
+gmx grompp -f sim.mdp -c sim.gro -p sim.top -o sim.tpr
+

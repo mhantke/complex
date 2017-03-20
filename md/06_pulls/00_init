@@ -1,0 +1,9 @@
+#!/bin/bash
+export LOG_FILE="./out/00_init.log"
+source ./log_to_file
+source ./env
+# Copy files over into output directory
+cp itp/*.itp out/
+cp mdp/*.mdp out/
+# Change wd to output directory
+cd out
